@@ -1,0 +1,26 @@
+[
+    {
+        "title": "Chỉ số DP Bitmask cho VRP",
+        "date": "2025-08-20",
+        "tags": [
+            "DP",
+            "VRP"
+        ],
+        "summary": "Tóm tắt state, chuyển trạng thái, mẹo tối ưu.",
+        "cover": "assets/images/post1.jpg",
+        "file": "posts/2025-08-20-vrp-bitmask.md",
+        "slug": "vrp-bitmask"
+    },
+    {
+        "title": "Tại sao LIS dùng lower_bound?",
+        "date": "2025-08-18",
+        "tags": [
+            "LIS",
+            "BinarySearch"
+        ],
+        "summary": "Giải thích logic tail và phản ví dụ.",
+        "cover": "assets/images/post2.jpg",
+        "file": "posts/2025-08-18-lis-lower-bound.md",
+        "slug": "lis-lower-bound"
+    }
+]

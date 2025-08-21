@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bài viết — My Corner</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container nav-wrap">
+            <a class="brand" href="../index.html#home">My <span>Corner</span></a>
+            <nav class="nav">
+                <ul class="nav-menu">
+                    <li><a href="../index.html">Trang chủ</a></li>
+                    <li><a href="../index.html#posts">Bài viết</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="section">
+        <div class="container">
+            <article id="article" class="article">
+                <h1 id="postTitle">Đang tải…</h1>
+                <p id="meta" class="meta"></p>
+                <img id="cover" class="cover" style="display:none" alt="">
+                <div id="toc" class="toc"></div>
+                <div id="content">...</div>
+            </article>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/common.min.js"></script>
+    <script>
+        // ----- helpers -----
+        function parseFrontMatter(md) {
+            const m = md.match(/^---\s*([\s\S]*?)---\s*\n([\s\S]*)$/);
+            if (!m) return [{}, md];
+            const yaml = m[1], body = m[2];
+            const meta = {};
+            yaml.split(/\r?\n/).forEach(line => {
+                const kv = line.match(/^(\w+):\s*(.*)$/);
+                if (!kv) return;
+                const k = kv[1], v = kv[2];
+                try { meta[k] = JSON.parse(v); } catch { meta[k] = v.replace(/^"|"$/g, ''); }
+            });
+            return [meta, body];
+        }
+        function buildTOC(container) {
+            const hs = container.querySelectorAll('h1,h2,h3');
+            if (!hs.length) return '';
+            const ul = document.createElement('ul');
+            hs.forEach(h => {
+                if (!h.id) h.id = h.textContent.trim().toLowerCase().replace(/\s+/g, '-');
+                const li = document.createElement('li');
+                li.className = 'toc-l' + (h.tagName[1] || '1');
+                const a = document.createElement('a'); a.href = '#' + h.id; a.textContent = h.textContent;
+                li.appendChild(a); ul.appendChild(li);
+            });
+            return ul;
+        }
+
+        async function main() {
+            const q = new URLSearchParams(location.search);
+            let file = q.get('file'); // ví dụ ?file=posts/2025-08-20-vrp-bitmask.md
+            if (!file) {
+                const slug = q.get('slug');
+                if (slug) {
+                    const idx = await fetch('_index.json').then(r => r.json()).catch(() => []);
+                    const row = idx.find(it => it.slug === slug);
+                    if (row) file = row.file;
+                }
+            }
+            if (!file) {
+                document.getElementById('postTitle').textContent = 'Không tìm thấy file.';
+                return;
+            }
+
+            const raw = await fetch('../' + file.replace(/^(\.\.\/)?/, ''), { cache: 'no-store' }).then(r => r.text());
+            const [meta, body] = parseFrontMatter(raw);
+
+            document.title = (meta.title ? meta.title + ' — ' : '') + 'My Corner';
+            document.getElementById('postTitle').textContent = meta.title || file;
+            document.getElementById('meta').textContent =
+                [meta.date, (meta.tags && meta.tags.length ? '• ' + meta.tags.join(', ') : '')].filter(Boolean).join('  ');
+            if (meta.cover) {
+                const img = document.getElementById('cover');
+                img.src = '../' + meta.cover; img.style.display = 'block';
+            }
+
+            marked.setOptions({
+                highlight(code, lang) {
+                    try { return hljs.highlight(code, { language: lang }).value; }
+                    catch { return hljs.highlightAuto(code).value; }
+                }
+            });
+            const html = marked.parse(body);
+            const safe = DOMPurify.sanitize(html);
+            const contentEl = document.getElementById('content');
+            contentEl.innerHTML = safe;
+
+            const tocEl = document.getElementById('toc');
+            const toc = buildTOC(contentEl);
+            if (toc) { tocEl.innerHTML = '<h3>Mục lục</h3>'; tocEl.appendChild(toc); }
+        }
+        main();
+    </script>
+</body>
+
+</html>

@@ -10,20 +10,11 @@
     <link rel="icon" href="assets/favicon.png" />
 </head>
 
-<div id="aboutPanel" class="panel">
-    <div class="panel__inner">
-        <button id="panelClose" class="icon-btn" style="position:absolute;top:.6rem;right:.6rem;">✕</button>
-        <div id="panelContent" class="panel__content">Đang tải…</div>
-    </div>
-</div>
-
-
 <body>
     <!-- Header / Nav -->
     <header class="site-header">
         <div class="container nav-wrap">
             <a class="brand" href="#home">My <span>Corner</span></a>
-
             <nav class="nav">
                 <button class="nav-toggle" aria-label="Toggle menu">&#9776;</button>
                 <ul class="nav-menu">
@@ -46,7 +37,7 @@
             <button id="prev" class="icon-btn" aria-label="Bài trước" title="Bài trước">⏮</button>
             <button id="playPause" class="icon-btn" aria-label="Play/Pause" title="Play/Pause">▶</button>
             <button id="next" class="icon-btn" aria-label="Bài sau" title="Bài sau">⏭</button>
-        
+
             <div class="track">
                 <div class="title" id="trackTitle">—</div>
                 <input id="seek" type="range" min="0" max="100" value="0" />
@@ -54,7 +45,7 @@
                     <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
                 </div>
             </div>
-        
+
             <div class="dropdown" id="trackDropdown">
                 <button class="dd-toggle" id="ddToggle">
                     <span id="ddLabel">Chọn bài</span> ▾
@@ -65,7 +56,6 @@
             <input id="volume" type="range" min="0" max="1" step="0.01" value="0.7" title="Âm lượng" />
             <audio id="audio" preload="metadata"></audio>
         </div>
-
     </header>
 
     <!-- Hero -->
@@ -74,8 +64,7 @@
             <h1>Welcome to my <span class="grad">Corner</span> 👋</h1>
             <p>Page này được lập ra để chia sẻ những hiểu biết và trải nghiệm cá nhân của bản thân mình.</p>
             <div class="hero-cta">
-                <a class="btn primary" href="#posts">Đọc bài mới</a>
-                <a class="btn ghost" href="#about">Xem mình làm gì</a>
+                <a class="btn primary" href="#posts">New post</a>
             </div>
         </div>
     </section>
@@ -84,35 +73,27 @@
     <section id="about" class="section">
         <div class="container grid-2 reveal">
             <div>
-                <h2>Về mình</h2>
+                <h2>About</h2>
                 <p>
-                    Kỹ thuật máy tính @ HUST. Thích tối ưu hoá thuật toán, chơi với đồ hoạ và xây app nhỏ.
-                    Blog này lưu lại ý tưởng, note nhanh và các dự án mini.
+                    Welcome to my little corner! This is a personal space where I share my knowledge, projects, and
+                    experiences in programming.
                 </p>
                 <ul class="tags">
                     <li>#C++</li>
-                    <li>#Python</li>
+                    <li>#Java</li>
                     <li>#DP</li>
                     <li>#Graphs</li>
-                    <li>#Web</li>
-                    <li>#ML</li>
                 </ul>
             </div>
             <div class="card glass">
                 <h3>Contact</h3>
                 <ul class="check">
-                    <li>
-                        📧 Email: <a href="mailto:Son.NVT2416602@sis.hust.edu.vn">Son.NVT2416602@sis.hust.edu.vn</a>
+                    <li>📧 Email: <a href="mailto:Son.NVT2416602@sis.hust.edu.vn">Son.NVT2416602@sis.hust.edu.vn</a>
                     </li>
-                    <li>
-                        🌐 Facebook: <a href="https://www.facebook.com/tson.vi" target="_blank">Nguyễn Vi Thái Sơn</a>
+                    <li>🌐 Facebook: <a href="https://www.facebook.com/tson.vi" target="_blank">Nguyễn Vi Thái Sơn</a>
                     </li>
-                    <li>
-                        💻 Codeforces: <a href="https://codeforces.com/profile/tson29" target="_blank">tson29</a>
-                    </li>
-                    <li>
-                        🐙 GitHub: <a href="https://github.com/tson295" target="_blank">tson295</a>
-                    </li>
+                    <li>💻 Codeforces: <a href="https://codeforces.com/profile/tson29" target="_blank">tson29</a></li>
+                    <li>🐙 GitHub: <a href="https://github.com/tson295" target="_blank">tson295</a></li>
                 </ul>
             </div>
         </div>
@@ -122,35 +103,7 @@
     <section id="posts" class="section">
         <div class="container">
             <h2 class="reveal">Bài viết nổi bật</h2>
-            <div class="posts-grid">
-                <!-- Post cards: thay nội dung thật của bạn -->
-                <article class="card post reveal">
-                    <img src="assets/images/post1.jpg" alt="Ảnh minh hoạ 1" />
-                    <div class="post-body">
-                        <h3>Ghi chú DP Bitmask cho VRP</h3>
-                        <p>Tóm tắt state, chuyển trạng thái và mẹo tối ưu bộ nhớ.</p>
-                        <a class="btn small" href="#">Đọc</a>
-                    </div>
-                </article>
-
-                <article class="card post reveal">
-                    <img src="assets/images/post2.jpg" alt="Ảnh minh hoạ 2" />
-                    <div class="post-body">
-                        <h3>Tại sao LIS dùng lower_bound?</h3>
-                        <p>Giải thích chi tiết logic tail, binary search và phản ví dụ.</p>
-                        <a class="btn small" href="#">Đọc</a>
-                    </div>
-                </article>
-
-                <article class="card post reveal">
-                    <img src="assets/images/post3.jpg" alt="Ảnh minh hoạ 3" />
-                    <div class="post-body">
-                        <h3>Góc Web: Sticky header & blur</h3>
-                        <p>Hiệu ứng đẹp mà nhẹ, kèm mẫu CSS dùng ngay.</p>
-                        <a class="btn small" href="#">Đọc</a>
-                    </div>
-                </article>
-            </div>
+            <div id="postsGrid" class="posts-grid"></div>
         </div>
     </section>
 
@@ -158,8 +111,9 @@
     <section id="contact" class="section">
         <div class="container reveal">
             <h2>Liên hệ</h2>
-            <p>Email: <a href="mailto:son@example.com">son@example.com</a> • GitHub: <a
-                    href="https://github.com/your-username" target="_blank" rel="noopener">your-username</a></p>
+            <p>Email: <a href="mailto:son@example.com">son@example.com</a> • GitHub:
+                <a href="https://github.com/your-username" target="_blank" rel="noopener">your-username</a>
+            </p>
         </div>
     </section>
 
@@ -170,6 +124,12 @@
             <p>© <span id="year"></span> Sơn’s Corner — Build with ❤️ & GitHub Pages</p>
         </div>
     </footer>
+
+    <!-- libs cho trang chủ (chỉ cần nếu bạn muốn dùng highlight ở đây, không bắt buộc) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/common.min.js"></script>
 
     <script src="script.js"></script>
 </body>

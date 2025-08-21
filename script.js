@@ -124,37 +124,6 @@ document.addEventListener('click', () => ddMenu.classList.remove('open'));
 // init
 if (playlist.length) { buildDropdown(); loadTrack(0, false); } else { trackTitle.textContent = 'Chưa có bài hát'; }
 
-// ===== Slide-over About panel =====
-const aboutLink = document.querySelector('a[href="about.html"]'); // link "Giới thiệu" trên navbar
-const panel = document.getElementById('aboutPanel');
-const panelClose = document.getElementById('panelClose');
-const panelContent = document.getElementById('panelContent');
-
-function openPanel() { panel.classList.add('open'); }
-function closePanel() { panel.classList.remove('open'); }
-
-aboutLink?.addEventListener('click', async (e) => {
-    // mở panel thay vì chuyển trang
-    e.preventDefault();
-    openPanel();
-    panelContent.innerHTML = 'Đang tải…';
-    try {
-        const res = await fetch('about.html');
-        const html = await res.text();
-        // Tách phần <main> của about.html để nhúng cho sạch
-        const tmp = document.createElement('div'); tmp.innerHTML = html;
-        const main = tmp.querySelector('main');
-        panelContent.innerHTML = main ? main.innerHTML : html;
-    } catch (err) {
-        panelContent.innerHTML = '<p>Lỗi tải nội dung.</p>';
-    }
-});
-
-panelClose?.addEventListener('click', closePanel);
-panel?.addEventListener('click', (e) => {
-    if (e.target === panel) closePanel(); // click nền đen để đóng
-});
-
 
 // ===== Scroll reveal =====
 const observer = new IntersectionObserver((entries) => {
@@ -177,3 +146,31 @@ backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 's
 
 // ===== Year =====
 document.getElementById('year').textContent = new Date().getFullYear();
+
+// ===== Load posts list on homepage =====
+async function loadPostsGrid() {
+    const grid = document.getElementById('postsGrid');
+    if (!grid) return; // không phải index.html
+    try {
+        const posts = await fetch('posts/_index.json', { cache: 'no-store' }).then(r => r.json());
+        // lấy 6 bài mới nhất
+        posts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+        const top = posts.slice(0, 6);
+        grid.innerHTML = top.map(p => `
+      <article class="card post reveal">
+        ${p.cover ? `<img src="${p.cover}" alt="">` : ''}
+        <div class="post-body">
+          <h3><a href="posts/post.html?file=${encodeURIComponent(p.file)}">${p.title}</a></h3>
+          <p>${p.summary || ''}</p>
+          <a class="btn small" href="posts/post.html?file=${encodeURIComponent(p.file)}">Đọc</a>
+        </div>
+      </article>
+    `).join('');
+        // gắn reveal animation cho thẻ mới
+        document.querySelectorAll('#postsGrid .reveal').forEach(el => observer.observe(el));
+    } catch (e) {
+        grid.innerHTML = '<p>Không tải được danh sách bài.</p>';
+    }
+}
+loadPostsGrid();
+
