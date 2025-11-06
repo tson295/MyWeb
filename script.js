@@ -65,7 +65,7 @@ if (
     seek && volume && currentTimeEl && durationEl &&
     trackTitle && ddToggle && ddMenu && ddLabel
 ) {
-    const TOTAL_TRACKS = 3;
+    const TOTAL_TRACKS = 6;
     const playlist = [];
     for (let i = 1; i <= TOTAL_TRACKS; i++) {
         playlist.push({
