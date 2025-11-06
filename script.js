@@ -230,7 +230,7 @@ async function initPostsGrid() {
     if (!grid) return;
 
     try {
-        const res = await fetch("./posts/_index.json", { cache: "no-store" });
+        const res = await fetch("./posts/index.json", { cache: "no-store" });
         if (!res.ok) throw new Error("HTTP " + res.status);
         const posts = await res.json();
 
