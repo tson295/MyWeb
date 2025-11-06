@@ -4,10 +4,16 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Sơn’s Corner</title>
-    <meta name="description" content="Góc nhỏ chia sẻ kiến thức & dự án cá nhân" />
+    <title>Son's Corner</title>
+    <meta name="description" content="Goc nho chia se kien thuc & du an ca nhan" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="icon" href="assets/favicon.png" />
+
+    <!-- Markdown + sanitize + highlight -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/common.min.js"></script>
 </head>
 
 <body>
@@ -22,7 +28,7 @@
                     <li><a href="#posts">Bài viết</a></li>
                     <li><a href="#contact">Liên hệ</a></li>
                     <li>
-                        <button id="themeToggle" class="icon-btn" aria-label="Đổi theme" title="Đổi theme">
+                        <button id="themeToggle" class="icon-btn" aria-label="Doi theme" title="Doi theme">
                             <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
                                 <path d="M21.64 13a9 9 0 01-10.63-10.63A9 9 0 1021.64 13z"></path>
                             </svg>
@@ -34,9 +40,9 @@
 
         <!-- Music Player -->
         <div class="container player">
-            <button id="prev" class="icon-btn" aria-label="Bài trước" title="Bài trước">⏮</button>
+            <button id="prev" class="icon-btn" aria-label="Bai truoc" title="Bai truoc">⏮</button>
             <button id="playPause" class="icon-btn" aria-label="Play/Pause" title="Play/Pause">▶</button>
-            <button id="next" class="icon-btn" aria-label="Bài sau" title="Bài sau">⏭</button>
+            <button id="next" class="icon-btn" aria-label="Bai sau" title="Bai sau">⏭</button>
 
             <div class="track">
                 <div class="title" id="trackTitle">—</div>
@@ -46,14 +52,14 @@
                 </div>
             </div>
 
-            <div class="dropdown" id="trackDropdown">
+            <div class="dropdown">
                 <button class="dd-toggle" id="ddToggle">
-                    <span id="ddLabel">Chọn bài</span> ▾
+                    <span id="ddLabel">Chon bai</span> ▾
                 </button>
                 <div class="dd-menu" id="ddMenu"></div>
             </div>
 
-            <input id="volume" type="range" min="0" max="1" step="0.01" value="0.7" title="Âm lượng" />
+            <input id="volume" type="range" min="0" max="1" step="0.01" value="0.7" title="Am luong" />
             <audio id="audio" preload="metadata"></audio>
         </div>
     </header>
@@ -62,7 +68,8 @@
     <section id="home" class="hero">
         <div class="container hero-inner reveal">
             <h1>Welcome to my <span class="grad">Corner</span> 👋</h1>
-            <p>Page này được lập ra để chia sẻ những hiểu biết và trải nghiệm cá nhân của bản thân mình.</p>
+            <p>Page này được lập ra để chia sẻ những hiểu biết và trải nghiệm cá nhân của bản thân mình.
+.</p>
             <div class="hero-cta">
                 <a class="btn primary" href="#posts">New post</a>
             </div>
@@ -75,8 +82,7 @@
             <div>
                 <h2>About</h2>
                 <p>
-                    Welcome to my little corner! This is a personal space where I share my knowledge, projects, and
-                    experiences in programming.
+                    This is a personal space to share knowledge, projects, and experiences in programming.
                 </p>
                 <ul class="tags">
                     <li>#C++</li>
@@ -99,7 +105,7 @@
         </div>
     </section>
 
-    <!-- Posts -->
+    <!-- Posts list -->
     <section id="posts" class="section">
         <div class="container">
             <h2 class="reveal">Bài viết nổi bật</h2>
@@ -107,29 +113,25 @@
         </div>
     </section>
 
-    <!-- Contact / Footer -->
-    <!-- <section id="contact" class="section">
-        <div class="container reveal">
-            <h2>Liên hệ</h2>
-            <p>Email: <a href="mailto:son@example.com">son@example.com</a> • GitHub:
-                <a href="https://github.com/your-username" target="_blank" rel="noopener">your-username</a>
-            </p>
+    <!-- Article viewer (SPA) -->
+    <section id="articleViewer" class="section hidden">
+        <div class="container">
+            <button id="articleBack" class="btn small ghost" type="button">← Quay lai danh sach</button>
+            <article class="article">
+                <h1 id="articleTitle"></h1>
+                <div class="meta" id="articleMeta"></div>
+                <div id="articleContent"></div>
+            </article>
         </div>
-    </section> -->
+    </section>
 
-    <button id="backToTop" aria-label="Lên đầu trang">↑</button>
+    <button id="backToTop" aria-label="Len dau trang">↑</button>
 
     <footer class="site-footer">
         <div class="container">
-            <p>© <span id="year"></span> Son’s Corner </p>
+            <p>© <span id="year"></span> Son's Corner</p>
         </div>
     </footer>
-
-    <!-- libs cho trang chủ (chỉ cần nếu bạn muốn dùng highlight ở đây, không bắt buộc) -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/common.min.js"></script>
 
     <script src="script.js"></script>
 </body>
