@@ -1,116 +1,82 @@
+
 <!doctype html>
 <html lang="vi">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bài viết — My Corner</title>
-    <link rel="stylesheet" href="../styles.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title id="postTitle">Bài viết</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="icon" href="../assets/favicon.png" />
     <link href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css" rel="stylesheet">
 </head>
 
 <body>
-    <header class="site-header">
-        <div class="container nav-wrap">
-            <a class="brand" href="../index.html#home">My <span>Corner</span></a>
-            <nav class="nav">
-                <ul class="nav-menu">
-                    <li><a href="../index.html">Trang chủ</a></li>
-                    <li><a href="../index.html#posts">Bài viết</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
     <main class="section">
         <div class="container">
-            <article id="article" class="article">
-                <h1 id="postTitle">Đang tải…</h1>
-                <p id="meta" class="meta"></p>
-                <img id="cover" class="cover" style="display:none" alt="">
-                <div id="toc" class="toc"></div>
-                <div id="content">...</div>
+            <article class="article">
+                <h1 id="articleTitle">Đang tải...</h1>
+                <div class="meta" id="articleMeta"></div>
+                <div id="articleContent"></div>
             </article>
         </div>
     </main>
 
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/common.min.js"></script>
-    <script>
-        // ----- helpers -----
-        function parseFrontMatter(md) {
-            const m = md.match(/^---\s*([\s\S]*?)---\s*\n([\s\S]*)$/);
-            if (!m) return [{}, md];
-            const yaml = m[1], body = m[2];
-            const meta = {};
-            yaml.split(/\r?\n/).forEach(line => {
-                const kv = line.match(/^(\w+):\s*(.*)$/);
-                if (!kv) return;
-                const k = kv[1], v = kv[2];
-                try { meta[k] = JSON.parse(v); } catch { meta[k] = v.replace(/^"|"$/g, ''); }
-            });
-            return [meta, body];
-        }
-        function buildTOC(container) {
-            const hs = container.querySelectorAll('h1,h2,h3');
-            if (!hs.length) return '';
-            const ul = document.createElement('ul');
-            hs.forEach(h => {
-                if (!h.id) h.id = h.textContent.trim().toLowerCase().replace(/\s+/g, '-');
-                const li = document.createElement('li');
-                li.className = 'toc-l' + (h.tagName[1] || '1');
-                const a = document.createElement('a'); a.href = '#' + h.id; a.textContent = h.textContent;
-                li.appendChild(a); ul.appendChild(li);
-            });
-            return ul;
-        }
 
-        async function main() {
-            const q = new URLSearchParams(location.search);
-            let file = q.get('file'); // ví dụ ?file=posts/2025-08-20-vrp-bitmask.md
-            if (!file) {
-                const slug = q.get('slug');
-                if (slug) {
-                    const idx = await fetch('_index.json').then(r => r.json()).catch(() => []);
-                    const row = idx.find(it => it.slug === slug);
-                    if (row) file = row.file;
-                }
-            }
-            if (!file) {
-                document.getElementById('postTitle').textContent = 'Không tìm thấy file.';
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const contentEl = document.getElementById('articleContent');
+            const titleEl = document.getElementById('articleTitle');
+            const metaEl = document.getElementById('articleMeta');
+
+            // 1. Lấy tên file từ URL (ví dụ: ?file=bai-viet-dau-tien.md)
+            const params = new URLSearchParams(window.location.search);
+            const fileName = params.get('file');
+
+            if (!fileName) {
+                titleEl.textContent = 'Lỗi: Không tìm thấy bài viết.';
                 return;
             }
 
-            const raw = await fetch('../' + file.replace(/^(\.\.\/)?/, ''), { cache: 'no-store' }).then(r => r.text());
-            const [meta, body] = parseFrontMatter(raw);
+            // 2. Tải metadata (tiêu đề, ngày tháng) từ _index.json
+            fetch('_index.json')
+                .then(r => r.json())
+                .then(posts => {
+                    const post = posts.find(p => p.file === fileName);
+                    if (post) {
+                        // Cập nhật tiêu đề và meta
+                        titleEl.textContent = post.title;
+                        document.getElementById('postTitle').textContent = post.title;
+                        metaEl.textContent = post.date ? `Ngày đăng: ${post.date}` : '';
 
-            document.title = (meta.title ? meta.title + ' — ' : '') + 'My Corner';
-            document.getElementById('postTitle').textContent = meta.title || file;
-            document.getElementById('meta').textContent =
-                [meta.date, (meta.tags && meta.tags.length ? '• ' + meta.tags.join(', ') : '')].filter(Boolean).join('  ');
-            if (meta.cover) {
-                const img = document.getElementById('cover');
-                img.src = '../' + meta.cover; img.style.display = 'block';
-            }
+                        // *Tải nội dung Markdown*
+                        return fetch(fileName);
+                    } else {
+                        throw new Error('Bài viết không tồn tại trong index.');
+                    }
+                })
+                .then(r => r.text())
+                .then(markdown => {
+                    // 3. Chuyển Markdown sang HTML an toàn
+                    const rawHtml = marked.parse(markdown);
+                    const cleanHtml = DOMPurify.sanitize(rawHtml);
+                    contentEl.innerHTML = cleanHtml;
 
-            marked.setOptions({
-                highlight(code, lang) {
-                    try { return hljs.highlight(code, { language: lang }).value; }
-                    catch { return hljs.highlightAuto(code).value; }
-                }
-            });
-            const html = marked.parse(body);
-            const safe = DOMPurify.sanitize(html);
-            const contentEl = document.getElementById('content');
-            contentEl.innerHTML = safe;
-
-            const tocEl = document.getElementById('toc');
-            const toc = buildTOC(contentEl);
-            if (toc) { tocEl.innerHTML = '<h3>Mục lục</h3>'; tocEl.appendChild(toc); }
-        }
-        main();
+                    // 4. Tô màu cú pháp (Highlighting) cho các khối code
+                    document.querySelectorAll('pre code').forEach((el) => {
+                        // Phải đảm bảo khối code đã được tải trước khi tô màu
+                        hljs.highlightElement(el);
+                    });
+                })
+                .catch(e => {
+                    console.error("Lỗi tải bài viết:", e);
+                    titleEl.textContent = 'Lỗi tải nội dung';
+                    contentEl.innerHTML = `<p>Không thể tải nội dung bài viết. Vui lòng kiểm tra file: ${fileName}</p>`;
+                });
+        });
     </script>
 </body>
 

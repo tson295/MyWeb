@@ -34,7 +34,7 @@ document.addEventListener('click', (e) => {
     if (!navMenu.contains(e.target) && !toggleBtn.contains(e.target)) navMenu.classList.remove('show');
 });
 
-// ===== Playlist Player =====
+// ===== Playlist Player (Đã loại bỏ tự động pause khi chuyển tab) =====
 const audio = document.getElementById('audio');
 const playPause = document.getElementById('playPause');
 const prevBtn = document.getElementById('prev');
@@ -46,7 +46,7 @@ const durationEl = document.getElementById('duration');
 const trackTitle = document.getElementById('trackTitle');
 
 // tạo playlist theo mẫu music1.mp3, music2.mp3, ...
-const TOTAL_TRACKS = 3; // <-- đổi theo số file bạn có
+const TOTAL_TRACKS = 6; // <-- đổi theo số file bạn có
 const playlist = [];
 for (let i = 1; i <= TOTAL_TRACKS; i++) {
     playlist.push({ key: `music${i}`, title: `music${i}`, src: `assets/audio/music${i}.mp3` });
@@ -90,14 +90,20 @@ seek.addEventListener('input', () => {
     audio.currentTime = (seek.value / 100) * (audio.duration || 0);
 });
 volume.addEventListener('input', () => { audio.volume = Number(volume.value); });
-document.addEventListener('visibilitychange', () => {
-    if (document.hidden && !audio.paused) { audio.pause(); playPause.textContent = '▶'; }
-});
+
+// ***************************************************************
+// ** ĐÃ XÓA document.addEventListener('visibilitychange', ...)**
+// ** Nhạc sẽ không bị dừng khi chuyển sang tab khác nữa. **
+// ***************************************************************
 
 // === Custom dropdown ===
 const ddToggle = document.getElementById('ddToggle');
 const ddMenu = document.getElementById('ddMenu');
 const ddLabel = document.getElementById('ddLabel');
+
+// ... (các hàm buildDropdown, syncDropdownActive, event listener cho dropdown giữ nguyên)
+
+// ... (các phần còn lại của script.js giữ nguyên)
 
 function buildDropdown() {
     ddMenu.innerHTML = '';
@@ -174,3 +180,47 @@ async function loadPostsGrid() {
 }
 loadPostsGrid();
 
+// ===== Article page: load markdown =====
+async function loadArticlePage() {
+    const articleEl = document.querySelector('.article');
+    if (!articleEl) return; // không phải trang post.html thì thôi
+
+    const params = new URLSearchParams(location.search);
+    let file = params.get('file');
+
+    if (!file) {
+        articleEl.innerHTML = '<p>Không tìm thấy tham số <code>file</code>.</p>';
+        return;
+    }
+
+    // tránh phá path
+    if (file.includes('..') || file.includes('/') || file.includes('\\')) {
+        articleEl.innerHTML = '<p>Tham số file không hợp lệ.</p>';
+        return;
+    }
+
+    // đảm bảo có đuôi .md
+    if (!file.endsWith('.md')) file += '.md';
+
+    try {
+        // Đang ở thư mục /posts/, nên fetch cùng thư mục
+        const res = await fetch(file, { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+
+        const md = await res.text();
+
+        // parse markdown -> HTML an toàn
+        const html = DOMPurify.sanitize(marked.parse(md));
+        articleEl.innerHTML = html;
+
+        // highlight code
+        articleEl.querySelectorAll('pre code').forEach(block => {
+            if (window.hljs) hljs.highlightElement(block);
+        });
+    } catch (err) {
+        console.error(err);
+        articleEl.innerHTML = '<p>Không đọc được markdown (sai đường dẫn / fetch lỗi).</p>';
+    }
+}
+
+loadArticlePage();

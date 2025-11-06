@@ -1,26 +1,16 @@
 [
     {
-        "title": "Chỉ số DP Bitmask cho VRP",
-        "date": "2025-08-20",
-        "tags": [
-            "DP",
-            "VRP"
-        ],
-        "summary": "Tóm tắt state, chuyển trạng thái, mẹo tối ưu.",
-        "cover": "assets/images/post1.jpg",
-        "file": "posts/2025-08-20-vrp-bitmask.md",
-        "slug": "vrp-bitmask"
+        "file": "bai-viet-thu-hai.md",
+        "title": "Tối ưu hóa Cơ sở dữ liệu: Indexing và Cache",
+        "summary": "Một bài viết sâu hơn về các kỹ thuật Indexing và sử dụng Cache để tăng tốc độ truy vấn cơ sở dữ liệu.",
+        "date": "2025-11-20",
+        "cover": "../assets/images/cover2.jpg"
     },
     {
-        "title": "Tại sao LIS dùng lower_bound?",
-        "date": "2025-08-18",
-        "tags": [
-            "LIS",
-            "BinarySearch"
-        ],
-        "summary": "Giải thích logic tail và phản ví dụ.",
-        "cover": "assets/images/post2.jpg",
-        "file": "posts/2025-08-18-lis-lower-bound.md",
-        "slug": "lis-lower-bound"
+        "file": "bai-viet-dau-tien.md",
+        "title": "Hướng Dẫn Lập Trình Cơ Bản với C++",
+        "summary": "Giới thiệu về ngôn ngữ C++ và tại sao bạn nên học nó cho các dự án hiệu suất cao.",
+        "date": "2025-11-06",
+        "cover": "../assets/images/cover1.jpg"
     }
 ]

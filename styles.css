@@ -113,10 +113,12 @@ body::before {
 .icon-btn:hover {
     border-color: rgba(255, 255, 255, 0.18);
 }
-/* === Music Player chỉnh sửa cho playlist === */
+
+/* === Music Player (Đã gộp và sửa lỗi Grid) === */
 .player {
     display: grid;
-    grid-template-columns: auto 1fr auto auto;
+    /* auto (Prev) | auto (Play/Pause) | auto (Next) | 1fr (Track) | auto (Dropdown) | auto (Volume) */
+    grid-template-columns: auto auto auto 1fr auto auto;
     align-items: center;
     gap: .8rem;
     padding: .75rem 0 1rem 0;
@@ -135,21 +137,6 @@ body::before {
 
 .player input[type="range"] {
     width: 100%;
-}
-.player {
-    display: grid;
-    grid-template-columns: auto auto auto 1fr auto auto;
-    align-items: center;
-    gap: .8rem;
-    padding: .75rem 0 1rem 0;
-}
-
-#trackSelect {
-    background: var(--card);
-    color: var(--text);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    padding: .45rem .6rem;
 }
 
 .hero {
@@ -348,31 +335,8 @@ body::before {
         display: flex;
     }
 }
-/* === Music Player (playlist) === */
-.player {
-    display: grid;
-    grid-template-columns: auto auto auto 1fr auto auto;
-    align-items: center;
-    gap: .8rem;
-    padding: .75rem 0 1rem 0;
-}
 
-.player .track {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: .35rem;
-}
-
-.player .title {
-    font-weight: 600;
-    font-size: .95rem;
-}
-
-.player input[type="range"] {
-    width: 100%;
-}
-
-/* === Custom dropdown for playlist === */
+/* === Custom dropdown for playlist (giữ nguyên) === */
 .dropdown {
     position: relative;
 }
@@ -426,29 +390,7 @@ body::before {
     background: rgba(110, 168, 254, 0.18);
 }
 
-/* Mobile nav (giữ nguyên) */
-@media (max-width: 720px) {
-    .nav-toggle {
-        display: block;
-    }
-
-    .nav-menu {
-        position: absolute;
-        right: 4%;
-        top: 64px;
-        background: rgba(16, 18, 24, 0.9);
-        padding: .6rem;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        display: none;
-        flex-direction: column;
-        gap: .4rem;
-    }
-
-    .nav-menu.show {
-        display: flex;
-    }
-}
+/* Các style liên quan đến bài viết (giữ nguyên) */
 .article {
     max-width: 800px;
     margin: 0 auto;
