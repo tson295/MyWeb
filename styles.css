@@ -39,17 +39,19 @@ a {
     margin: 0 auto;
 }
 
-/* Animated gradient backdrop */
-body::before {
-    content: "";
+#bgCanvas {
     position: fixed;
-    inset: -10% -10% auto -10%;
-    height: 60vh;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    /* dưới content, trên gradient */
+    pointer-events: none;
+}
+
+body::before {
     z-index: -1;
-    background: radial-gradient(600px 200px at 20% 20%, rgba(110, 168, 254, 0.25), transparent 60%),
-        radial-gradient(500px 200px at 80% 0%, rgba(167, 139, 250, 0.25), transparent 60%);
-    filter: blur(40px);
-    animation: float 18s ease-in-out infinite alternate;
+    /* gradient dưới canvas */
 }
 
 @keyframes float {
@@ -567,4 +569,52 @@ body::before {
 
 .post .post-body .btn.small:hover {
     background: var(--accent2);
+}
+/* Player title khu vực tên bài hát */
+.player .title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+}
+
+/* span chứa tên bài hát */
+.track-title-inner {
+    display: inline-block;
+    padding-right: 2rem;
+    /* khoảng cách khi loop */
+}
+
+/* Khi tên dài hơn khung thì chạy marquee */
+.track-title-inner.marquee {
+    animation: track-marquee 10s linear infinite;
+}
+
+@keyframes track-marquee {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+/* Dropdown playlist: giới hạn chiều cao ~4-5 bài, phần dư scroll */
+.dd-menu {
+    position: absolute;
+    right: 0;
+    top: 110%;
+    background: rgba(16, 18, 24, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    min-width: 180px;
+    max-height: 180px;
+    /* ~4-5 item */
+    overflow-y: auto;
+    /* phần thừa scroll */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+    display: none;
+    z-index: 50;
 }

@@ -65,14 +65,24 @@ if (
     seek && volume && currentTimeEl && durationEl &&
     trackTitle && ddToggle && ddMenu && ddLabel
 ) {
-    const TOTAL_TRACKS = 6;
-    const playlist = [];
-    for (let i = 1; i <= TOTAL_TRACKS; i++) {
-        playlist.push({
-            title: "music" + i,
-            src: "assets/audio/music" + i + ".mp3"
-        });
-    }
+    // ===== Playlist: Tên bài hát =====
+    const playlist = [
+        { title: "Tệ thật, anh nhớ em", src: "assets/audio/music1.mp3" },
+        { title: "Anh khác hay em khác", src: "assets/audio/music8.mp3" },
+        { title: "Perfect - One Direction", src: "assets/audio/music2.mp3" },
+        { title: "[MV] K.will(케이윌) - Talk Love", src: "assets/audio/music3.mp3" },
+        { title: "Vicetone - Walk Thru Fire (Lyrics) ft. Meron Ryan", src: "assets/audio/music4.mp3" },
+        { title: "Taylor Swift - Enchanted", src: "assets/audio/music5.mp3" },
+        { title: "Falling you - Lighter and princess", src: "assets/audio/music6.mp3" },
+        { title: "[Mashup][AMV] Nhịp Yêu Thương", src: "assets/audio/music7.mp3" },
+
+
+
+
+
+
+        // Thêm nhạc ở đây
+    ];
 
     let current = 0;
 
@@ -81,6 +91,24 @@ if (
         const m = Math.floor(t / 60);
         const s = Math.floor(t % 60).toString().padStart(2, "0");
         return m + ":" + s;
+    }
+
+    // Set tên bài + bật marquee nếu dài
+    function setTrackTitle(text) {
+        trackTitle.innerHTML = ""; // clear
+        const span = document.createElement("span");
+        span.className = "track-title-inner";
+        span.textContent = text;
+        trackTitle.appendChild(span);
+
+        // check overflow -> nếu dài hơn khung thì cho chạy
+        requestAnimationFrame(() => {
+            if (span.scrollWidth > trackTitle.clientWidth) {
+                span.classList.add("marquee");
+            } else {
+                span.classList.remove("marquee");
+            }
+        });
     }
 
     function buildDropdown() {
@@ -99,11 +127,9 @@ if (
     }
 
     function syncDropdown() {
-        ddLabel.textContent = playlist[current]
-            ? playlist[current].title
-            : "Chon bai";
-        const items = ddMenu.querySelectorAll(".dd-item");
-        items.forEach((el, i) => {
+        const t = playlist[current];
+        ddLabel.textContent = t ? t.title : "Chon bai";
+        ddMenu.querySelectorAll(".dd-item").forEach((el, i) => {
             el.classList.toggle("active", i === current);
         });
     }
@@ -113,12 +139,13 @@ if (
         current = (idx + playlist.length) % playlist.length;
         const track = playlist[current];
         audio.src = track.src;
-        trackTitle.textContent = track.title;
+        setTrackTitle(track.title);
         audio.load();
+
         if (autoplay) {
             audio.play().then(() => {
                 playPause.textContent = "⏸";
-            }).catch(() => {});
+            }).catch(() => { });
         } else {
             playPause.textContent = "▶";
         }
@@ -173,11 +200,12 @@ if (
 
     if (playlist.length) {
         buildDropdown();
-        loadTrack(0, false);
+        loadTrack(0, false); // load bài đầu, chưa auto play
     } else {
-        trackTitle.textContent = "Khong co bai hat";
+        setTrackTitle("Khong co bai hat");
     }
 }
+
 
 // SCROLL REVEAL
 let revealObserver = null;
@@ -327,3 +355,160 @@ if (articleBackBtn) {
 }
 
 initPostsGrid();
+
+// ===== Animated background: simple particle network =====
+(function () {
+    const canvas = document.getElementById("bgCanvas");
+    if (!canvas || !canvas.getContext) return;
+
+    const ctx = canvas.getContext("2d");
+
+    let width, height;
+    let points = [];
+
+    const POINT_COUNT = 180;       // nhiều điểm -> nhiều line
+    const MIN_SPEED = 0.06;        // tốc độ tối thiểu
+    const MAX_SPEED = 0.30;        // tốc độ tối đa (không quá loạn)
+    const LINK_DISTANCE = 170;     // khoảng cách nối giữa các điểm
+    const MOUSE_RADIUS = 180;      // vùng highlight quanh chuột
+
+    const mouse = {
+        x: 0,
+        y: 0,
+        active: false
+    };
+
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    }
+
+    function randomVelocity() {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = MIN_SPEED + Math.random() * (MAX_SPEED - MIN_SPEED);
+        return {
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed
+        };
+    }
+
+    function createPoints() {
+        points = [];
+        for (let i = 0; i < POINT_COUNT; i++) {
+            const v = randomVelocity();
+            points.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: v.vx,
+                vy: v.vy
+            });
+        }
+    }
+
+    function keepSpeed(p) {
+        const v2 = p.vx * p.vx + p.vy * p.vy;
+        if (v2 === 0) {
+            const v = randomVelocity();
+            p.vx = v.vx;
+            p.vy = v.vy;
+            return;
+        }
+        const v = Math.sqrt(v2);
+        if (v < MIN_SPEED) {
+            p.vx = (p.vx / v) * MIN_SPEED;
+            p.vy = (p.vy / v) * MIN_SPEED;
+        } else if (v > MAX_SPEED) {
+            p.vx = (p.vx / v) * MAX_SPEED;
+            p.vy = (p.vy / v) * MAX_SPEED;
+        }
+    }
+
+    window.addEventListener("resize", () => {
+        resize();
+        createPoints();
+    });
+
+    window.addEventListener("mousemove", (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+        mouse.active = true;
+    });
+
+    window.addEventListener("mouseleave", () => {
+        mouse.active = false;
+    });
+
+    function loop() {
+        ctx.clearRect(0, 0, width, height);
+
+        // Cập nhật & vẽ điểm
+        for (const p of points) {
+            // cập nhật vị trí
+            p.x += p.vx;
+            p.y += p.vy;
+
+            // bounce biên
+            if (p.x <= 0 || p.x >= width) {
+                p.vx *= -1;
+                p.x = Math.max(0, Math.min(width, p.x));
+            }
+            if (p.y <= 0 || p.y >= height) {
+                p.vy *= -1;
+                p.y = Math.max(0, Math.min(height, p.y));
+            }
+
+            // giữ tốc độ ổn định
+            keepSpeed(p);
+
+            // vẽ điểm
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 1.3, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(148,163,253,0.9)";
+            ctx.fill();
+        }
+
+        // Vẽ line giữa các điểm
+        for (let i = 0; i < points.length; i++) {
+            const a = points[i];
+            for (let j = i + 1; j < points.length; j++) {
+                const b = points[j];
+                const dx = a.x - b.x;
+                const dy = a.y - b.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < LINK_DISTANCE) {
+                    const alpha = 1 - dist / LINK_DISTANCE;
+                    ctx.beginPath();
+                    ctx.moveTo(a.x, a.y);
+                    ctx.lineTo(b.x, b.y);
+                    ctx.strokeStyle = "rgba(110,168,254," + alpha.toFixed(3) + ")";
+                    ctx.lineWidth = 0.4;
+                    ctx.stroke();
+                }
+            }
+        }
+
+        // Highlight quanh chuột: chỉ vẽ line, KHÔNG lực, KHÔNG hút/đuổi
+        if (mouse.active) {
+            for (const p of points) {
+                const dx = p.x - mouse.x;
+                const dy = p.y - mouse.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < MOUSE_RADIUS) {
+                    const alpha = 1 - dist / MOUSE_RADIUS;
+                    ctx.beginPath();
+                    ctx.moveTo(mouse.x, mouse.y);
+                    ctx.lineTo(p.x, p.y);
+                    ctx.strokeStyle = "rgba(129,140,248," + (alpha * 0.55).toFixed(3) + ")";
+                    ctx.lineWidth = 0.8;
+                    ctx.stroke();
+                }
+            }
+        }
+
+        requestAnimationFrame(loop);
+    }
+
+    resize();
+    createPoints();
+    loop();
+})();
