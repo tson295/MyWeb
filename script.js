@@ -68,6 +68,12 @@ if (
     // ===== Playlist: Tên bài hát =====
     const playlist = [
         { title: "Tệ thật, anh nhớ em", src: "assets/audio/music1.mp3" },
+        { title: "Người con gái ta thương - Hà Anh Tuấn", src: "assets/audio/music9.mp3" },
+        { title: "Chờ anh nhé - Hoàng Dũng", src: "assets/audio/music10.mp3" },
+        { title: "Giữ anh cho ngày hôm qua - Hoàng Dũng", src: "assets/audio/music11.mp3" },
+        { title: "Người gieo mầm xanh - Hoàng Dũng", src: "assets/audio/music12.mp3" },
+        { title: "Đường tôi chở em về - Bùi Trường Linh", src: "assets/audio/music13.mp3" },
+        
         { title: "Anh khác hay em khác", src: "assets/audio/music8.mp3" },
         { title: "Perfect - One Direction", src: "assets/audio/music2.mp3" },
         { title: "[MV] K.will(케이윌) - Talk Love", src: "assets/audio/music3.mp3" },
